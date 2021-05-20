@@ -8,6 +8,13 @@ if [ -z $podman ]; then
   exit 1
 fi
 
+if [ -f /etc/selinux/config ] && [ $(getenforce) == "Enforcing" ]; then
+  echo "Cannot build with SELinux status set to Enforcing."
+  echo "Please set SELinux status to Permissive with:"
+  echo "    sudo setenforce 0"
+  exit 1
+fi
+
 if ! grep -rq '/usr/bin/wine' /proc/sys/fs/binfmt_misc; then
   echo "binfmt_misc support for PE pointing to /usr/bin/wine must be enabled to build the Windows mono container."
   echo "This can be done by:"
